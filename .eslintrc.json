@@ -6,6 +6,11 @@
   "env": {
     "es6": true
   },
+  "globals": {
+    "BigInt": true,
+    "BigInt64Array": true,
+    "BigUint64Array": true
+  },
   "extends": "eslint:recommended",
   "rules": {
     "for-direction": ["warn"],
@@ -117,7 +122,8 @@
       "ignoreStrings": true,
       "ignoreTemplateLiterals": true,
       "ignoreRegExpLiterals": true }],
-    "new-cap": ["error"],
+    "new-cap": ["error", {
+      "capIsNewExceptions": ["BigInt"] }],
     "new-parens": ["error"],
     "no-array-constructor": ["error"],
     "no-multi-assign": ["error"],
