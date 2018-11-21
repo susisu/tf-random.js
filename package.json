@@ -1,5 +1,5 @@
 {
-  "name": "tf-random.js",
+  "name": "tf-random",
   "version": "0.0.1",
   "description": "Splittable pseudorandom number generator",
   "repository": "https://github.com/susisu/tf-random.js",
