@@ -12,6 +12,8 @@
     "getter-return": ["error"],
     "no-async-promise-executor": ["error"],
     "no-cond-assign": ["warn", "always"],
+    "no-constant-condition": ["warn", {
+      "checkLoops": false }],
     "no-control-regex": ["off"],
     "no-misleading-character-class": ["error"],
     "no-template-curly-in-string": ["warn"],
