@@ -1,6 +1,14 @@
 # tf-random.js
 Pure JavaScript port of [tf-random](http://hackage.haskell.org/package/tf-random-0.5), splittable pseudorandom number generator.
 
+## Installation
+```
+# npm
+npm i @susisu/tf-random
+# yarn
+yarn add @susisu/tf-random
+```
+
 ## Usage
 ``` javascript
 import { TFGen } from "@susisu/tf-random";
