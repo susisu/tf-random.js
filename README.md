@@ -15,6 +15,10 @@ const [x, nextGen] = gen.next();
 const [gen1, gen2] = nextGen.split();
 ```
 
+You can call `gen.splitn(n, i)` to derive `2 ** n` independent generators and obtain `i`th of them.
+
+The package also provides some utility functions `random`, `randomInt32`, `randomInt32R`, etc. for generating random numbers.
+
 ## License
 [MIT License](http://opensource.org/licenses/mit-license.php)
 
