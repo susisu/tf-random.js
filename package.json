@@ -1,10 +1,14 @@
 {
-  "name": "tf-random",
+  "name": "@susisu/tf-random",
   "version": "0.0.1",
   "description": "Splittable pseudorandom number generator",
   "repository": "https://github.com/susisu/tf-random.js",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
   "license": "MIT",
+  "files": [
+    "lib",
+    "dist"
+  ],
   "main": "dist/tf-random.js",
   "module": "dist/tf-random.mjs",
   "scripts": {
