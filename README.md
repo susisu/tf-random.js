@@ -2,7 +2,7 @@
 Pure JavaScript port of [tf-random](http://hackage.haskell.org/package/tf-random-0.5), splittable pseudorandom number generator.
 
 ## Installation
-```
+``` shell
 # npm
 npm i @susisu/tf-random
 # yarn
