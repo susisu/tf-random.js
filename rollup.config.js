@@ -1,9 +1,4 @@
-/* eslint-env node */
-/* eslint-disable strict */
-
-"use strict";
-
-const pkg = require("./package.json");
+import pkg from "./package.json";
 
 export default {
   input   : "lib/index.js",

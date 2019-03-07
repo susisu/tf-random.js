@@ -25,6 +25,12 @@
       "rules": {
         "max-len": "off"
       }
+    },
+    {
+      "files": ["rollup.config.js"],
+      "env": {
+        "node": true
+      }
     }
   ]
 }
