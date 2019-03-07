@@ -16,7 +16,7 @@
     "fix": "eslint lib --fix",
     "test": "jest",
     "build": "rollup -c",
-    "prepare": "run-s lint test build",
+    "prepublishOnly": "run-s lint test build",
     "clean": "rimraf dist"
   },
   "devDependencies": {
