@@ -1,4 +1,6 @@
 # tf-random.js
+[![Build Status](https://travis-ci.com/susisu/tf-random.js.svg?branch=master)](https://travis-ci.com/susisu/tf-random.js)
+
 Pure JavaScript port of [tf-random](http://hackage.haskell.org/package/tf-random-0.5), splittable pseudorandom number generator.
 
 ## Installation
