@@ -6,7 +6,6 @@
   "author": "Susisu <susisu2413@yahoo.co.jp>",
   "license": "MIT",
   "files": [
-    "lib",
     "dist"
   ],
   "main": "dist/tf-random.js",
