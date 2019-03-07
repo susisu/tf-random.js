@@ -13,6 +13,18 @@
       "env": {
         "jest": true
       }
+    },
+    {
+      "files": ["jest.config.js"],
+      "parserOptions":{
+        "sourceType": "script"
+      },
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "max-len": "off"
+      }
     }
   ]
 }
