@@ -7,6 +7,9 @@
   "env": {
     "es6": true
   },
+  "rules": {
+    "function-call-argument-newline": "off"
+  },
   "overrides": [
     {
       "files": ["**/*.test.js"],
