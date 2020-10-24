@@ -11,8 +11,8 @@
   "main": "dist/tf-random.js",
   "module": "dist/tf-random.mjs",
   "scripts": {
-    "lint": "eslint lib *.js",
-    "lint:fix": "eslint --fix lib *.js",
+    "lint": "eslint lib '*.js'",
+    "lint:fix": "eslint --fix lib '*.js'",
     "test": "jest",
     "build": "rollup -c",
     "prepublishOnly": "run-s lint test clean build",
@@ -23,8 +23,14 @@
     "@babel/preset-env": "^7.12.1",
     "@susisu/eslint-config": "^0.0.28",
     "eslint": "^7.12.0",
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-jest-formatting": "^2.0.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "jest": "^26.6.1",
     "npm-run-all": "^4.1.5",
+    "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.32.1"
   }

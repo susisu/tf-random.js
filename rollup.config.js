@@ -1,17 +1,17 @@
 import pkg from "./package.json";
 
 export default {
-  input   : "lib/index.js",
+  input: "lib/index.js",
   external: Object.keys(pkg.dependencies || {}),
-  output  : [
+  output: [
     {
-      format   : "cjs",
-      file     : pkg.main,
+      format: "cjs",
+      file: pkg.main,
       sourcemap: true,
     },
     {
-      format   : "es",
-      file     : pkg.module,
+      format: "es",
+      file: pkg.module,
       sourcemap: true,
     },
   ],
