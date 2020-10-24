@@ -16,8 +16,9 @@
     "lint-fix": "eslint --fix src '*.js'",
     "test": "jest",
     "build": "rollup -c",
+    "clean": "rimraf dist",
     "prepublishOnly": "run-s clean lint test build",
-    "clean": "rimraf dist"
+    "ci": "run-s lint test build"
   },
   "devDependencies": {
     "@susisu/eslint-config": "^0.0.28",
