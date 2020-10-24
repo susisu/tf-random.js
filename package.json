@@ -1,6 +1,6 @@
 {
   "name": "@susisu/tf-random",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Splittable pseudorandom number generator",
   "repository": "https://github.com/susisu/tf-random.js",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
