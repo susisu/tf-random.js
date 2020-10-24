@@ -84,5 +84,12 @@ describe("TFGen", () => {
       const newGen = gen.splitn(32, 0x7fffffff);
       expect(newGen).not.toBe(gen);
     });
+
+    it("should throw error if `nbits` is out of [0, 32]", () => {
+      const gen = initGen();
+      expect(() => {
+        gen.splitn(48, 0);
+      }).toThrow(Error);
+    });
   });
 });
