@@ -43,6 +43,7 @@ describe("TFGen", () => {
       const p = gen.next();
       expect(p).toHaveLength(2);
       const [val, newGen] = p;
+      expect(val).toMatchInlineSnapshot(`78121409`);
       expect(val).toBeGreaterThanOrEqual(-0x80000000);
       expect(val).toBeLessThanOrEqual(0x7fffffff);
       expect(newGen).toBeInstanceOf(TFGen);

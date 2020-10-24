@@ -16,6 +16,26 @@ describe("threefish256EncryptBlock", () => {
 
   test("encryption (int32out = false)", () => {
     const out = threefish256EncryptBlock(key, block, false);
+    expect(out).toMatchInlineSnapshot(`
+      Array [
+        Array [
+          -1320871142,
+          33182013,
+        ],
+        Array [
+          -443630245,
+          1484484385,
+        ],
+        Array [
+          1529591855,
+          -1511178000,
+        ],
+        Array [
+          417707284,
+          1267102143,
+        ],
+      ]
+    `);
     for (const n of out) {
       const [lo, hi] = n;
       expect(lo).toBeGreaterThanOrEqual(0x80000000 | 0);
@@ -27,6 +47,18 @@ describe("threefish256EncryptBlock", () => {
 
   test("encryption (int32out = true)", () => {
     const out = threefish256EncryptBlock(key, block, true);
+    expect(out).toMatchInlineSnapshot(`
+      Array [
+        33182013,
+        -1320871142,
+        1484484385,
+        -443630245,
+        -1511178000,
+        1529591855,
+        1267102143,
+        417707284,
+      ]
+    `);
     for (const n of out) {
       expect(n).toBeGreaterThanOrEqual(0x80000000 | 0);
       expect(n).toBeLessThanOrEqual(0x7fffffff | 0);
