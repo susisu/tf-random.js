@@ -68,14 +68,6 @@ export function threefish256EncryptBlock(
   $copy(x2, add(block[2], ks[2]));
   $copy(x3, add(block[3], ks[3]));
 
-  function injectKey(r: number): void {
-    $add(x0, ks[r % (SKEIN_256_STATE_WORDS + 1)]);
-    $add(x1, ks[(r + 1) % (SKEIN_256_STATE_WORDS + 1)]);
-    $add(x2, ks[(r + 2) % (SKEIN_256_STATE_WORDS + 1)]);
-    $add(x3, ks[(r + 3) % (SKEIN_256_STATE_WORDS + 1)]);
-    $addUint32(x3, r);
-  }
-
   for (let r = 1; r <= SKEIN_256_ROUNDS_TOTAL / 8; r++) {
     $add(x0, x1);
     $rotateL(x1, R_256_0_0);
@@ -105,7 +97,11 @@ export function threefish256EncryptBlock(
     $rotateL(x1, R_256_3_1);
     $xor(x1, x2);
 
-    injectKey(2 * r - 1);
+    $add(x0, ks[(2 * r - 1) % (SKEIN_256_STATE_WORDS + 1)]);
+    $add(x1, ks[(2 * r) % (SKEIN_256_STATE_WORDS + 1)]);
+    $add(x2, ks[(2 * r + 1) % (SKEIN_256_STATE_WORDS + 1)]);
+    $add(x3, ks[(2 * r + 2) % (SKEIN_256_STATE_WORDS + 1)]);
+    $addUint32(x3, 2 * r - 1);
 
     $add(x0, x1);
     $rotateL(x1, R_256_4_0);
@@ -135,7 +131,11 @@ export function threefish256EncryptBlock(
     $rotateL(x1, R_256_7_1);
     $xor(x1, x2);
 
-    injectKey(2 * r);
+    $add(x0, ks[(2 * r) % (SKEIN_256_STATE_WORDS + 1)]);
+    $add(x1, ks[(2 * r + 1) % (SKEIN_256_STATE_WORDS + 1)]);
+    $add(x2, ks[(2 * r + 2) % (SKEIN_256_STATE_WORDS + 1)]);
+    $add(x3, ks[(2 * r + 3) % (SKEIN_256_STATE_WORDS + 1)]);
+    $addUint32(x3, 2 * r);
   }
 
   if (int32out) {
