@@ -169,7 +169,7 @@ export class TFGen {
    */
   splitn(nbits: number, i: number): TFGen {
     if (nbits < 0 || 32 < nbits) {
-      throw new Error("nbits out of range");
+      throw new Error(`nbits out of range: ${nbits}`);
     }
     const b = fromUint32((0xffffffff >> (32 - nbits)) & i);
     if (this.bitsIndex + nbits > 64) {
