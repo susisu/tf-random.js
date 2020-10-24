@@ -2,7 +2,9 @@
  * Utility functions to generate random numbers.
  */
 
+import { TFGen } from "./gen";
 import {
+  Uint64,
   ZERO,
   MAX,
   fromSafeInt,
@@ -15,23 +17,22 @@ import {
   and,
   shiftR,
   clz,
-} from "./uint64.js";
+} from "./uint64";
 
 /**
- * @param {TFGen} gen
- * @param {number} max - 32-bit uint.
- * @returns {[number, TFGen]} A pair of a random 32-bit uint and a new generator.
+ * Generates a random 32-bit unsigned integer up to `max`.
+ * @returns A pair of a random 32-bit unsigned integer and a new generator.
  */
-function randomUint32M(gen, max) {
+function randomUint32M(gen: TFGen, max: number): [number, TFGen] {
   if (max === 0xffffffff) {
     const [val, nextGen] = gen.next();
     return [val >>> 0, nextGen];
-  } else if ((max + 1) & (max === 0)) {
+  } else if (((max + 1) & max) === 0 /* max == 0b11...1 */) {
     const [val, nextGen] = gen.next();
     return [(val & max) >>> 0, nextGen];
   } else {
     const mask = 0xffffffff >> Math.clz32(max);
-    let currentGen = gen;
+    let currentGen: TFGen = gen;
     while (true) {
       const [val, nextGen] = currentGen.next();
       const maskedVal = (val & mask) >>> 0;
@@ -43,24 +44,19 @@ function randomUint32M(gen, max) {
   }
 }
 
-// int32
-
 /**
  * Generates a random 32-bit signed integer.
- * @param {TFGen} gen
- * @returns {[number, TFGen]} A pair of a random 32-bit int and a new generator.
+ * @returns A pair of a random 32-bit integer and a new generator.
  */
-export function randomInt32(gen) {
+export function randomInt32(gen: TFGen): [number, TFGen] {
   return gen.next();
 }
 
 /**
- * Generates a random 32-bit signed integer in the given bounds.
- * @param {TFGen} gen
- * @param {[number, number]} bounds
- * @returns {[number, TFGen]} A pair of a random 32-bit int and a new generator.
+ * Generates a random 32-bit signed integer within a bounds.
+ * @returns A pair of a random 32-bit integer and a new generator.
  */
-export function randomInt32R(gen, bounds) {
+export function randomInt32R(gen: TFGen, bounds: readonly [number, number]): [number, TFGen] {
   const lower = bounds[0] | 0;
   const upper = bounds[1] | 0;
   if (lower === upper) {
@@ -74,25 +70,20 @@ export function randomInt32R(gen, bounds) {
   }
 }
 
-// uint32
-
 /**
  * Generates a random 32-bit unsigned integer.
- * @param {TFGen} gen
- * @returns {[number, TFGen]} A pair of a random 32-bit uint and a new generator.
+ * @returns A pair of a random 32-bit unsigned integer and a new generator.
  */
-export function randomUint32(gen) {
+export function randomUint32(gen: TFGen): [number, TFGen] {
   const [val, nextGen] = gen.next();
   return [val >>> 0, nextGen];
 }
 
 /**
- * Generates a random 32-bit unsigned integer in the given bounds.
- * @param {TFGen} gen
- * @param {[number, number]} bounds
- * @returns {[number, TFGen]} A pair of a random 32-bit uint and a new generator.
+ * Generates a random 32-bit unsigned integer within a bounds.
+ * @returns A pair of a random 32-bit unsigned integer and a new generator.
  */
-export function randomUint32R(gen, bounds) {
+export function randomUint32R(gen: TFGen, bounds: readonly [number, number]): [number, TFGen] {
   const lower = bounds[0] >>> 0;
   const upper = bounds[1] >>> 0;
   if (lower === upper) {
@@ -106,26 +97,20 @@ export function randomUint32R(gen, bounds) {
   }
 }
 
-// boolean
-
 /**
- * Generates a random boolean.
- * @param {TFGen} gen
- * @returns {[number, TFGen]} A pair of a random boolean and a new generator.
+ * Generates a random boolean value.
+ * @returns A pair of a random boolean value and a new generator.
  */
-export function randomBoolean(gen) {
+export function randomBoolean(gen: TFGen): [boolean, TFGen] {
   const [val, nextGen] = gen.next();
   return [!(val & 0x1), nextGen];
 }
 
-// uint64
-
 /**
- * @param {TFGen} gen
- * @param {uint64} max - 64-bit uint.
- * @returns {[uint64, TFGen]} A pair of a random 64-bit uint and a new generator.
+ * Generates a random 64-bit unsigned integer up to `max`.
+ * @returns A pair of a random 64-bit unsigned integer and a new generator.
  */
-function randomUint64M(gen, max) {
+function randomUint64M(gen: TFGen, max: Uint64): [Uint64, TFGen] {
   if (eq(max, MAX)) {
     const [lo, gen1] = gen.next();
     const [hi, gen2] = gen1.next();
@@ -133,7 +118,7 @@ function randomUint64M(gen, max) {
   } else if (eq(and(incr(max), max), ZERO)) {
     const [lo, gen1] = gen.next();
     const [hi, gen2] = gen1.next();
-    const val = [lo, hi];
+    const val: Uint64 = [lo, hi];
     return [and(val, max), gen2];
   } else {
     const mask = shiftR(MAX, clz(max));
@@ -141,7 +126,7 @@ function randomUint64M(gen, max) {
     while (true) {
       const [lo, gen1] = currentGen.next();
       const [hi, gen2] = gen1.next();
-      const val = [lo, hi];
+      const val: Uint64 = [lo, hi];
       const maskedVal = and(val, mask);
       if (lt(maskedVal, max) || eq(maskedVal, max)) {
         return [maskedVal, gen2];
@@ -152,12 +137,10 @@ function randomUint64M(gen, max) {
 }
 
 /**
- * Generates a random 64-bit unsigned integer in the given bounds.
- * @param {TFGen} gen
- * @param {[uint64, uint64]} bounds
- * @returns {[uint64, TFGen]} A pair of a random 64-bit uint and a new generator.
+ * Generates a random 64-bit unsigned integer within a bounds.
+ * @returns A pair of a random 64-bit unsigned integer and a new generator.
  */
-function randomUint64R(gen, bounds) {
+function randomUint64R(gen: TFGen, bounds: readonly [Uint64, Uint64]): [Uint64, TFGen] {
   const [lower, upper] = bounds;
   if (eq(lower, upper)) {
     return [lower, gen];
@@ -170,45 +153,37 @@ function randomUint64R(gen, bounds) {
   }
 }
 
-// safe integer
-
 const MIN_SAFE_INT = fromSafeInt(Number.MIN_SAFE_INTEGER);
 const MAX_SAFE_INT = fromSafeInt(Number.MAX_SAFE_INTEGER);
 
 /**
  * Generates a random safe integer (`-(2 ** 53 - 1)` to `2 ** 53 - 1`).
- * @param {TFGen} gen
- * @returns {[number, TFGen]} A pair of a random safe integer and a new generator.
+ * @returns A pair of a random safe integer and a new generator.
  */
-export function randomInt(gen) {
+export function randomInt(gen: TFGen): [number, TFGen] {
   const [val, nextGen] = randomUint64R(gen, [MIN_SAFE_INT, MAX_SAFE_INT]);
   return [toSafeInt(val), nextGen];
 }
 
 /**
- * Generates a random safe integer in the given bounds.
- * @param {TFGen} gen
- * @param {[number, number]} bounds
- * @returns {[number, TFGen]} A pair of a random integer and a new generator.
+ * Generates a random safe integer within a bounds.
+ * @returns A pair of a random integer and a new generator.
  */
-export function randomIntR(gen, bounds) {
+export function randomIntR(gen: TFGen, bounds: readonly [number, number]): [number, TFGen] {
   const lower = fromSafeInt(bounds[0]);
   const upper = fromSafeInt(bounds[1]);
   const [val, nextGen] = randomUint64R(gen, [lower, upper]);
   return [toSafeInt(val), nextGen];
 }
 
-// number
-
 const ZERO_SAFE_INT = fromSafeInt(0);
 const MAX_SAFE_INT_MINUS_ONE = fromSafeInt(Number.MAX_SAFE_INTEGER - 1);
 
 /**
- * Generates a random number in the interval `[0, 1)`.
- * @param {TFGen} gen
- * @returns {[number, TFGen]} A pair of a random number and a new generator.
+ * Generates a random number within `[0, 1)`.
+ * @returns A pair of a random number and a new generator.
  */
-export function random(gen) {
+export function random(gen: TFGen): [number, TFGen] {
   const [val, nextGen] = randomUint64R(gen, [ZERO_SAFE_INT, MAX_SAFE_INT_MINUS_ONE]);
   return [toSafeInt(val) / Number.MAX_SAFE_INTEGER, nextGen];
 }

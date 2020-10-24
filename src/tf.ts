@@ -2,11 +2,11 @@
  * Implementation of Threefish-256 block cipher.
  */
 
-import { $copy, add, $add, $addUint32, $xor, $rotateL } from "./uint64.js";
+import { Uint64, WUint64, $copy, add, $add, $addUint32, $xor, $rotateL } from "./uint64";
 
 const SKEIN_256_STATE_WORDS = 4;
 const SKEIN_256_ROUNDS_TOTAL = 72;
-const SKEIN_KS_PARITY = [0xa9fc1a22, 0x1bd11bda];
+const SKEIN_KS_PARITY: Uint64 = [0xa9fc1a22, 0x1bd11bda];
 const R_256_0_0 = 14;
 const R_256_0_1 = 16;
 const R_256_1_0 = 52;
@@ -24,18 +24,31 @@ const R_256_6_1 = 22;
 const R_256_7_0 = 32;
 const R_256_7_1 = 32;
 
+export type Uint64x4 = readonly [Uint64, Uint64, Uint64, Uint64];
+export type Int32x8 = readonly [number, number, number, number, number, number, number, number];
+
 /**
  * Threefish-256 block cipher.
- * This implementation is basically a translation of the reference implementation available at the
- * Skein website (http://www.skein-hash.info) but simplified as the original tf-random does.
- * @private
- * @param {uitn64[]} key - 4 * 64-bit uint.
- * @param {uitn64[]} block - 4 * 64-bit uint.
- * @param {boolean} int32out - If true, output is 8 * 32-bit int.
- * @returns {(uint64|number)[]} 4 * 64-bit uint, or 8 * 32-bit int if `int32out` is true.
+ * This implementation is basically a translation of the reference implementation available at
+ * Skein's website (http://www.skein-hash.info), but a bit simplified.
+ * @param key Hash key.
+ * @param block Block to be encrypted.
+ * @param int32out If `true`, outputs 8 * 32-bit integers.
+ * @returns Encrypted block.
  */
-export function threefish256EncryptBlock(key, block, int32out) {
-  const ks = [
+export function threefish256EncryptBlock(key: Uint64x4, block: Uint64x4, int32out: false): Uint64x4;
+export function threefish256EncryptBlock(key: Uint64x4, block: Uint64x4, int32out: true): Int32x8;
+export function threefish256EncryptBlock(
+  key: Uint64x4,
+  block: Uint64x4,
+  int32out: boolean
+): Uint64x4 | Int32x8;
+export function threefish256EncryptBlock(
+  key: Uint64x4,
+  block: Uint64x4,
+  int32out: boolean
+): Uint64x4 | Int32x8 {
+  const ks: readonly Uint64[] = [
     key[0],
     key[1],
     key[2],
@@ -45,17 +58,17 @@ export function threefish256EncryptBlock(key, block, int32out) {
       key[0][1] ^ key[1][1] ^ key[2][1] ^ key[3][1] ^ SKEIN_KS_PARITY[1],
     ],
   ];
-  // To avoid memory allocation, `x0` through `x3` are treated as if they are "pointers" to uint64s.
-  const x0 = [0, 0],
-    x1 = [0, 0],
-    x2 = [0, 0],
-    x3 = [0, 0];
+  // Use writable version to avoid memory allocation.
+  const x0: WUint64 = [0, 0];
+  const x1: WUint64 = [0, 0];
+  const x2: WUint64 = [0, 0];
+  const x3: WUint64 = [0, 0];
   $copy(x0, add(block[0], ks[0]));
   $copy(x1, add(block[1], ks[1]));
   $copy(x2, add(block[2], ks[2]));
   $copy(x3, add(block[3], ks[3]));
 
-  function injectKey(r) {
+  function injectKey(r: number): void {
     $add(x0, ks[r % (SKEIN_256_STATE_WORDS + 1)]);
     $add(x1, ks[(r + 1) % (SKEIN_256_STATE_WORDS + 1)]);
     $add(x2, ks[(r + 2) % (SKEIN_256_STATE_WORDS + 1)]);

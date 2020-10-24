@@ -1,8 +1,13 @@
+import typescript from "rollup-plugin-typescript2";
 import pkg from "./package.json";
 
 export default {
-  input: "lib/index.js",
-  external: Object.keys(pkg.dependencies || {}),
+  plugins: [
+    typescript({
+      tsconfig: "tsconfig.build.json",
+    }),
+  ],
+  input: "src/index.ts",
   output: [
     {
       format: "cjs",
@@ -15,4 +20,5 @@ export default {
       sourcemap: true,
     },
   ],
+  external: Object.keys(pkg.dependencies || {}),
 };

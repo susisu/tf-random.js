@@ -1,4 +1,5 @@
-export { TFGen } from "./gen.js";
+export { Uint64 } from "./uint64";
+export { TFGen } from "./gen";
 export {
   randomInt32,
   randomInt32R,
@@ -8,4 +9,4 @@ export {
   randomInt,
   randomIntR,
   random,
-} from "./random.js";
+} from "./random";

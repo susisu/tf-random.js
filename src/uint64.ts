@@ -1,22 +1,27 @@
 /*
- * 64-bit uint (uint64) arithmetics.
- *
- * A uint64 is represented as a pair of int32s `[lo, hi]` where `lo` represents the lower bits,
- * and `hi` represents higher.
+ * Arithmetics of 64-bit unsigned integers.
  */
-
-export const ZERO = [0x00000000 | 0, 0x00000000 | 0];
-export const ONE = [0x00000001 | 0, 0x00000000 | 0];
-export const MAX = [0xffffffff | 0, 0xffffffff | 0];
-export const MAX_MINUS_ONE = [0xfffffffe | 0, 0xffffffff | 0];
 
 /**
- * Casts a 32-bit int to uint64.
- * @private
- * @param {number} a - A 32-bit uint.
- * @returns {uint64}
+ * A `Uint64` is represented as a pair of 32-bit integers `[lo, hi]` where `lo` represents the lower
+ * bits, and `hi` represents higher.
  */
-export function fromUint32(a) {
+export type Uint64 = readonly [lo: number, hi: number];
+
+/**
+ * The writable version of `Uint64`.
+ */
+export type WUint64 = [lo: number, hi: number];
+
+export const ZERO: Uint64 = [0x00000000 | 0, 0x00000000 | 0];
+export const ONE: Uint64 = [0x00000001 | 0, 0x00000000 | 0];
+export const MAX: Uint64 = [0xffffffff | 0, 0xffffffff | 0];
+export const MAX_MINUS_ONE: Uint64 = [0xfffffffe | 0, 0xffffffff | 0];
+
+/**
+ * Casts a 32-bit integer to `Uint64`.
+ */
+export function fromUint32(a: number): Uint64 {
   return [a | 0, 0];
 }
 
@@ -25,13 +30,10 @@ const SAFE_INT_HI_MULT = 0x100000000; // 1 << 32
 const SAFE_INT_HI_SIGN = 1 << 21; // positive if bit is set
 
 /**
- * Casts a safe integer (`-(2 ** 53 - 1)` to `2 ** 53 -1`) to uint64.
+ * Casts a safe integer (`-(2 ** 53 - 1)` to `2 ** 53 -1`) to `Uint64`.
  * Integers are sequentially mapped in the range between `0` and `2 ** 54 - 2`.
- * @private
- * @param {number} a - A safe integer.
- * @returns {uint64}
  */
-export function fromSafeInt(a) {
+export function fromSafeInt(a: number): Uint64 {
   if (!Number.isSafeInteger(a)) {
     throw new Error(`${a} is not a safe integer`);
   }
@@ -49,12 +51,9 @@ export function fromSafeInt(a) {
 }
 
 /**
- * Casts a uint64 to a safe integer (`-(2 ** 53 - 1)` to `2 ** 53 -1`).
- * @private
- * @param {uint64} x
- * @returns {number}
+ * Casts a `Uint64` to a safe integer (`-(2 ** 53 - 1)` to `2 ** 53 -1`).
  */
-export function toSafeInt(x) {
+export function toSafeInt(x: Uint64): number {
   const a = x[0] >>> 0;
   const b = (x[1] & SAFE_INT_HI_MASK) >>> 0;
   if (x[1] & SAFE_INT_HI_SIGN) {
@@ -66,24 +65,16 @@ export function toSafeInt(x) {
 
 /**
  * Copy `y` to `x`.
- * @private
- * @param {uint64_ptr} x
- * @param {uint64} y
- * @returns {undefined}
  */
-export function $copy(x, y) {
+export function $copy(x: WUint64, y: Uint64): void {
   x[0] = y[0];
   x[1] = y[1];
 }
 
 /**
  * Computes `x + y`.
- * @private
- * @param {uint64} x
- * @param {uint64} y
- * @returns {uint64}
  */
-export function add(x, y) {
+export function add(x: Uint64, y: Uint64): Uint64 {
   const lo = (x[0] + y[0]) | 0;
   const overflow = (x[0] < 0 && (y[0] < 0 || lo >= 0)) || (y[0] < 0 && lo >= 0) ? 1 : 0;
   const hi = (x[1] + y[1] + overflow) | 0;
@@ -91,13 +82,9 @@ export function add(x, y) {
 }
 
 /**
- * Compiutes `x + y` and assign it to `x`.
- * @private
- * @param {uint64_ptr} x
- * @param {uint64} y
- * @returns {undefined}
+ * Compiutes `x + y` and assign the result to `x`.
  */
-export function $add(x, y) {
+export function $add(x: WUint64, y: Uint64): void {
   const lo = (x[0] + y[0]) | 0;
   const overflow = (x[0] < 0 && (y[0] < 0 || lo >= 0)) || (y[0] < 0 && lo >= 0) ? 1 : 0;
   const hi = (x[1] + y[1] + overflow) | 0;
@@ -106,13 +93,9 @@ export function $add(x, y) {
 }
 
 /**
- * Computes `x + a` where `a` is a 32-bit uint, and assign it to `x`.
- * @private
- * @param {uint64_ptr} x
- * @param {uint32} a
- * @returns {undefined}
+ * Computes `x + a` where `a` is a 32-bit unsigned integer, and assign the result to `x`.
  */
-export function $addUint32(x, a) {
+export function $addUint32(x: WUint64, a: number): void {
   const as = a | 0;
   const lo = (x[0] + as) | 0;
   const overflow = (x[0] < 0 && (as < 0 || lo >= 0)) || (as < 0 && lo >= 0) ? 1 : 0;
@@ -123,11 +106,8 @@ export function $addUint32(x, a) {
 
 /**
  * Computes `x + 1`.
- * @private
- * @param {uint64} x
- * @returns {uint64}
  */
-export function incr(x) {
+export function incr(x: Uint64): Uint64 {
   const lo = (x[0] + 1) | 0;
   const hi = (x[1] + (lo === 0 ? 1 : 0)) | 0;
   return [lo, hi];
@@ -135,12 +115,8 @@ export function incr(x) {
 
 /**
  * Computes `x - y`.
- * @private
- * @param {uint64} x
- * @param {uint64} y
- * @returns {uint64}
  */
-export function sub(x, y) {
+export function sub(x: Uint64, y: Uint64): Uint64 {
   const z0 = (~y[0] + 1) | 0;
   const z1 = (~y[1] + (z0 === 0 ? 1 : 0)) | 0;
   const lo = (x[0] + z0) | 0;
@@ -151,23 +127,15 @@ export function sub(x, y) {
 
 /**
  * Computes `x == y`.
- * @private
- * @param {uint64} x
- * @param {uint64} y
- * @returns {boolean}
  */
-export function eq(x, y) {
+export function eq(x: Uint64, y: Uint64): boolean {
   return x[0] === y[0] && x[1] === y[1];
 }
 
 /**
  * Computes `x < y`.
- * @private
- * @param {uint64} x
- * @param {uint64} y
- * @returns {boolean}
  */
-export function lt(x, y) {
+export function lt(x: Uint64, y: Uint64): boolean {
   const x1u = x[1] >>> 0;
   const h1u = y[1] >>> 0;
   if (x1u < h1u) {
@@ -181,57 +149,37 @@ export function lt(x, y) {
 
 /**
  * Computes `x & y`.
- * @private
- * @param {uint64} x
- * @param {uint64} y
- * @returns {uint64}
  */
-export function and(x, y) {
+export function and(x: Uint64, y: Uint64): Uint64 {
   return [x[0] & y[0], x[1] & y[1]];
 }
 
 /**
  * Computes `x | y`.
- * @private
- * @param {uint64} x
- * @param {uint64} y
- * @returns {uint64}
  */
-export function or(x, y) {
+export function or(x: Uint64, y: Uint64): Uint64 {
   return [x[0] | y[0], x[1] | y[1]];
 }
 
 /**
  * Computes `x ^ y`.
- * @private
- * @param {uint64} x
- * @param {uint64} y
- * @returns {uint64}
  */
-export function xor(x, y) {
+export function xor(x: Uint64, y: Uint64): Uint64 {
   return [x[0] ^ y[0], x[1] ^ y[1]];
 }
 
 /**
- * Computes `x ^ y` and assing it to `x`.
- * @private
- * @param {uint64_ptr} x
- * @param {uint64} y
- * @returns {undefined}
+ * Computes `x ^ y` and assing the result to `x`.
  */
-export function $xor(x, y) {
+export function $xor(x: WUint64, y: Uint64): void {
   x[0] = x[0] ^ y[0];
   x[1] = x[1] ^ y[1];
 }
 
 /**
  * Computes `x << n`.
- * @private
- * @param {uint64} x
- * @param {number} n
- * @returns {uint64}
  */
-export function shiftL(x, n) {
+export function shiftL(x: Uint64, n: number): Uint64 {
   if (n === 0) {
     return x;
   } else if (n < 32) {
@@ -245,12 +193,8 @@ export function shiftL(x, n) {
 
 /**
  * Computes `x >> n`.
- * @private
- * @param {uint64} x
- * @param {number} n
- * @returns {uint64}
  */
-export function shiftR(x, n) {
+export function shiftR(x: Uint64, n: number): Uint64 {
   if (n === 0) {
     return x;
   } else if (n < 32) {
@@ -263,17 +207,16 @@ export function shiftR(x, n) {
 }
 
 /**
- * Computes `rotateL(x, y)` and assign it to `x`.
- * @private
- * @param {uint64_ptr} x
- * @param {number} n
- * @returns {undefined}
+ * Computes `rotateL(x, y)` and assign the result to `x`.
  */
-export function $rotateL(x, n) {
+export function $rotateL(x: WUint64, n: number): void {
   const n64 = n % 64;
   // l = shiftL(x, n64)
   // r = shiftR(x, 64 - n64)
-  let l0, l1, r0, r1;
+  let l0: number;
+  let l1: number;
+  let r0: number;
+  let r1: number;
   if (n64 === 0) {
     l0 = x[0];
     l1 = x[1];
@@ -301,12 +244,8 @@ export function $rotateL(x, n) {
 
 /**
  * Sets i-th bit of `x` to `1`.
- * @private
- * @param {bigint} x
- * @param {bigint} i
- * @returns {bigint}
  */
-export function setBit(x, i) {
+export function setBit(x: Uint64, i: number): Uint64 {
   if (i < 32) {
     return [x[0] | (1 << i), x[1]];
   } else if (i < 64) {
@@ -318,11 +257,8 @@ export function setBit(x, i) {
 
 /**
  * Counts leading zeros.
- * @private
- * @param {uint64} x
- * @returns {number}
  */
-export function clz(x) {
+export function clz(x: Uint64): number {
   const clzHi = Math.clz32(x[1]);
   if (clzHi === 32) {
     return clzHi + Math.clz32(x[0]);
