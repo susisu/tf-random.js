@@ -5,11 +5,12 @@
   "repository": "https://github.com/susisu/tf-random.js",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
   "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "dist/tf-random.js",
-  "module": "dist/tf-random.mjs",
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src '*.js'",
