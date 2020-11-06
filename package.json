@@ -18,8 +18,7 @@
     "test": "jest",
     "build": "rollup -c",
     "clean": "rimraf dist",
-    "prepublishOnly": "run-s clean lint test build",
-    "ci": "run-s lint test build"
+    "prepublishOnly": "run-s clean lint test build"
   },
   "devDependencies": {
     "@susisu/eslint-config": "^0.0.28",
