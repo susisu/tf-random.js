@@ -15,7 +15,8 @@ const defaultGen = TFGen.seed(
 describe("TFGen", () => {
   describe(".seed", () => {
     it("should initialize a generator", () => {
-      const seed: Int32x8 = [
+      const seed: Int32x8 =
+        /* prettier-ignore */ [
         0x00000000,
         0x00000000,
         0x01234567,

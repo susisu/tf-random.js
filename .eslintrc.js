@@ -1,15 +1,13 @@
 "use strict";
 
 module.exports = {
-  plugins: ["prettier"],
   overrides: [
     {
       files: ["*.{ts,tsx}"],
       extends: [
         "@susisu/eslint-config/preset/ts-types",
-        "prettier",
-        "prettier/@typescript-eslint",
         "plugin:eslint-comments/recommended",
+        "prettier",
       ],
       parserOptions: {
         ecmaVersion: 2019,
@@ -20,7 +18,6 @@ module.exports = {
         es6: true,
       },
       rules: {
-        "prettier/prettier": "error",
         "eslint-comments/no-unused-disable": "error",
       },
     },
@@ -47,7 +44,6 @@ module.exports = {
         node: true,
       },
       rules: {
-        "prettier/prettier": "error",
         "eslint-comments/no-unused-disable": "error",
       },
     },
